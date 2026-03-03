@@ -41,31 +41,37 @@ export function usePlayer() {
         audio.addEventListener('loadedmetadata', handleLoadedMetadata);
         audio.addEventListener('ended', handleEnded);
 
+        // Apply initial volume
+        audio.volume = isMuted ? 0 : volume;
+
         return () => {
             audio.removeEventListener('timeupdate', handleTimeUpdate);
             audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
             audio.removeEventListener('ended', handleEnded);
         };
-    }, [nextSong, setCurrentTime, setDuration]);
+    }, [nextSong, setCurrentTime, setDuration, volume, isMuted]);
 
     useEffect(() => {
-        if (audioRef.current && currentSong) {
-            audioRef.current.src = currentSong.audioUrl;
-            if (isPlaying) {
-                audioRef.current.play().catch(() => { });
+        const audio = audioRef.current;
+        if (audio && currentSong) {
+            const isSameSrc = audio.src === currentSong.audioUrl;
+            if (!isSameSrc) {
+                audio.src = currentSong.audioUrl;
+                audio.load();
             }
-        }
-    }, [currentSong]);
 
-    useEffect(() => {
-        if (audioRef.current) {
             if (isPlaying) {
-                audioRef.current.play().catch(() => { });
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch((error) => {
+                        console.error("Playback failed:", error);
+                    });
+                }
             } else {
-                audioRef.current.pause();
+                audio.pause();
             }
         }
-    }, [isPlaying]);
+    }, [currentSong, isPlaying]);
 
     useEffect(() => {
         if (audioRef.current) {
