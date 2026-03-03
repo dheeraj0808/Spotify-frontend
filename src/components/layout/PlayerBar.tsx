@@ -13,9 +13,11 @@ import {
     FaVolumeDown,
     FaHeart,
     FaRegHeart,
-    FaExpand,
 } from 'react-icons/fa';
-import { BsArrowsAngleExpand, BsList } from 'react-icons/bs';
+import { BsArrowsAngleExpand, BsList, BsPlayBtn } from 'react-icons/bs';
+import { HiOutlineMicrophone, HiOutlineQueueList } from "react-icons/hi2";
+import { MdOutlineDevices } from "react-icons/md";
+import { TbPictureInPicture } from "react-icons/tb";
 
 export default function PlayerBar() {
     const {
@@ -70,18 +72,20 @@ export default function PlayerBar() {
         return (
             <footer
                 style={{
-                    height: '90px',
-                    backgroundColor: '#181818',
-                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                    height: '80px',
+                    backgroundColor: '#000000',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '0 16px',
                 }}
             >
-                <p style={{ color: '#6A6A6A', fontSize: '13px' }}>
-                    Select a song to start playing
-                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6A6A6A' }}>
+                    <BsPlayBtn style={{ fontSize: '18px' }} />
+                    <p style={{ fontSize: '13px', fontWeight: 500 }}>
+                        Select a song to start playing
+                    </p>
+                </div>
             </footer>
         );
     }
@@ -89,11 +93,10 @@ export default function PlayerBar() {
     return (
         <footer
             style={{
-                height: '90px',
-                backgroundColor: '#181818',
-                borderTop: '1px solid rgba(255,255,255,0.05)',
+                height: '80px',
+                backgroundColor: '#000000',
                 display: 'grid',
-                gridTemplateColumns: '1fr 2fr 1fr',
+                gridTemplateColumns: 'minmax(180px, 1fr) 2fr minmax(180px, 1fr)',
                 alignItems: 'center',
                 padding: '0 16px',
                 gap: '16px',
@@ -205,8 +208,8 @@ export default function PlayerBar() {
                     <button
                         onClick={togglePlay}
                         style={{
-                            width: '36px',
-                            height: '36px',
+                            width: '32px',
+                            height: '32px',
                             borderRadius: '50%',
                             backgroundColor: '#FFFFFF',
                             color: '#000000',
@@ -215,9 +218,11 @@ export default function PlayerBar() {
                             justifyContent: 'center',
                             cursor: 'pointer',
                             border: 'none',
-                            transition: 'transform 100ms ease',
+                            transition: 'transform 0.1s ease',
                             fontSize: '14px',
                         }}
+                        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                     >
                         {isPlaying ? <FaPause /> : <FaPlay style={{ marginLeft: '2px' }} />}
                     </button>
@@ -351,88 +356,92 @@ export default function PlayerBar() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'flex-end',
-                    gap: '12px',
+                    gap: '8px',
                 }}
             >
-                <button
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#A7A7A7',
-                        fontSize: '14px',
-                        padding: '4px',
-                    }}
-                >
-                    <BsList />
+                <button className="icon-hover-bg" style={{ padding: '8px', color: '#A7A7A7', borderRadius: '50%', cursor: 'pointer' }} title="Now Playing View">
+                    <TbPictureInPicture style={{ fontSize: '18px' }} />
+                </button>
+                <button className="icon-hover-bg" style={{ padding: '8px', color: '#A7A7A7', borderRadius: '50%', cursor: 'pointer' }} title="Lyrics">
+                    <HiOutlineMicrophone style={{ fontSize: '18px' }} />
+                </button>
+                <button className="icon-hover-bg" style={{ padding: '8px', color: '#A7A7A7', borderRadius: '50%', cursor: 'pointer' }} title="Queue">
+                    <HiOutlineQueueList style={{ fontSize: '18px' }} />
+                </button>
+                <button className="icon-hover-bg" style={{ padding: '8px', color: '#A7A7A7', borderRadius: '50%', cursor: 'pointer' }} title="Connect to a device">
+                    <MdOutlineDevices style={{ fontSize: '18px' }} />
                 </button>
 
-                <button
-                    onClick={toggleMute}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#A7A7A7',
-                        fontSize: '14px',
-                        padding: '4px',
-                    }}
-                >
-                    <VolumeIcon />
-                </button>
-
-                <div
-                    onClick={handleVolumeClick}
-                    onMouseEnter={() => setHoveringVolume(true)}
-                    onMouseLeave={() => setHoveringVolume(false)}
-                    style={{
-                        width: '100px',
-                        height: '4px',
-                        backgroundColor: 'rgba(255,255,255,0.1)',
-                        borderRadius: '2px',
-                        cursor: 'pointer',
-                        position: 'relative',
-                        ...(hoveringVolume ? { height: '6px' } : {}),
-                        transition: 'height 100ms ease',
-                    }}
-                >
-                    <div
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
+                    <button
+                        onClick={toggleMute}
                         style={{
-                            height: '100%',
-                            width: `${(isMuted ? 0 : volume) * 100}%`,
-                            backgroundColor: hoveringVolume ? '#1DB954' : '#FFFFFF',
-                            borderRadius: '2px',
-                            position: 'relative',
-                            transition: 'background-color 200ms ease',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: '#A7A7A7',
+                            fontSize: '18px',
+                            padding: '4px',
                         }}
                     >
-                        {hoveringVolume && (
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    right: '-6px',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    width: '12px',
-                                    height: '12px',
-                                    borderRadius: '50%',
-                                    backgroundColor: '#FFFFFF',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                }}
-                            />
-                        )}
+                        <VolumeIcon />
+                    </button>
+
+                    <div
+                        onClick={handleVolumeClick}
+                        onMouseEnter={() => setHoveringVolume(true)}
+                        onMouseLeave={() => setHoveringVolume(false)}
+                        style={{
+                            width: '94px',
+                            height: '4px',
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            borderRadius: '2px',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            ...(hoveringVolume ? { height: '6px' } : {}),
+                            transition: 'height 100ms ease',
+                        }}
+                    >
+                        <div
+                            style={{
+                                height: '100%',
+                                width: `${(isMuted ? 0 : volume) * 100}%`,
+                                backgroundColor: hoveringVolume ? '#1DB954' : '#FFFFFF',
+                                borderRadius: '2px',
+                                position: 'relative',
+                            }}
+                        >
+                            {hoveringVolume && (
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        right: '-6px',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        width: '12px',
+                                        height: '12px',
+                                        borderRadius: '50%',
+                                        backgroundColor: '#FFFFFF',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                    }}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
 
                 <button
+                    className="icon-hover-bg"
                     style={{
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
                         color: '#A7A7A7',
                         fontSize: '14px',
-                        padding: '4px',
+                        padding: '8px',
+                        borderRadius: '50%',
                     }}
+                    title="Full screen"
                 >
                     <BsArrowsAngleExpand />
                 </button>
