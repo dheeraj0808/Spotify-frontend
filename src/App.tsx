@@ -17,35 +17,54 @@ function AppLayout() {
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'grid',
+        gridTemplateAreas: '"sidebar main" "player player"',
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: '1fr auto',
         height: '100vh',
+        gap: '8px',
+        padding: '8px',
+        backgroundColor: '#000000',
         overflow: 'hidden',
       }}
     >
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Sidebar */}
+      {/* Sidebar Area */}
+      <div 
+        style={{ 
+          gridArea: 'sidebar', 
+          width: '280px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '8px',
+          overflow: 'hidden'
+        }}
+      >
         <Sidebar />
-
-        {/* Main Content */}
-        <main
-          style={{
-            flex: 1,
-            overflow: 'auto',
-            backgroundColor: '#121212',
-            borderRadius: '8px 8px 0 0',
-            marginLeft: '0',
-            position: 'relative',
-            background: 'linear-gradient(180deg, #333333 0%, #121212 300px)',
-          }}
-        >
-          <Navbar />
-          <AppRoutes />
-        </main>
       </div>
 
-      {/* Player Bar (always at bottom) */}
-      <PlayerBar />
+      {/* Main Content Area */}
+      <main
+        style={{
+          gridArea: 'main',
+          overflow: 'hidden',
+          backgroundColor: '#121212',
+          borderRadius: '8px',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'linear-gradient(180deg, #222222 0%, #121212 100%)',
+        }}
+      >
+        <Navbar />
+        <div style={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
+          <AppRoutes />
+        </div>
+      </main>
+
+      {/* Player Bar Area */}
+      <div style={{ gridArea: 'player' }}>
+        <PlayerBar />
+      </div>
     </div>
   );
 }
