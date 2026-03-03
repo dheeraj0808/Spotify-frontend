@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { usePlayerStore } from '../../store/store';
+import { usePlayerContext } from '../../context/PlayerContext';
 import { formatTime } from '../../utils/formatTime';
 import {
     FaPlay,
@@ -32,12 +32,12 @@ export default function PlayerBar() {
         togglePlay,
         nextSong,
         prevSong,
-        setCurrentTime,
+        seekTo,
         setVolume,
         toggleMute,
         toggleRepeat,
         toggleShuffle,
-    } = usePlayerStore();
+    } = usePlayerContext();
 
     const [liked, setLiked] = useState(false);
     const [hoveringProgress, setHoveringProgress] = useState(false);
@@ -50,9 +50,9 @@ export default function PlayerBar() {
             const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const newTime = (x / rect.width) * duration;
-            setCurrentTime(newTime);
+            seekTo(newTime);
         },
-        [duration, setCurrentTime]
+        [duration, seekTo]
     );
 
     const handleVolumeClick = useCallback(
