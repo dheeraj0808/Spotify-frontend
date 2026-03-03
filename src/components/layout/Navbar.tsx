@@ -13,13 +13,13 @@ export default function Navbar() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0 32px',
+                padding: '0 24px',
                 position: 'sticky',
                 top: 0,
                 zIndex: 100,
-                background: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                backdropFilter: 'blur(16px)',
+                transition: 'background-color 0.3s ease',
             }}
+            className="header-blur"
         >
             {/* Navigation Arrows */}
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -29,15 +29,15 @@ export default function Navbar() {
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
-                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
                         color: '#FFFFFF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer',
                         border: 'none',
-                        transition: 'all 200ms ease',
                     }}
+                    className="icon-hover-bg"
                     aria-label="Go back"
                 >
                     <FaChevronLeft style={{ fontSize: '14px' }} />
@@ -48,15 +48,15 @@ export default function Navbar() {
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
-                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
                         color: '#FFFFFF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer',
                         border: 'none',
-                        transition: 'all 200ms ease',
                     }}
+                    className="icon-hover-bg"
                     aria-label="Go forward"
                 >
                     <FaChevronRight style={{ fontSize: '14px' }} />
@@ -69,34 +69,36 @@ export default function Navbar() {
                     variant="outline"
                     size="sm"
                     style={{
-                        borderColor: 'rgba(255,255,255,0.3)',
-                        fontSize: '12px',
+                        backgroundColor: '#FFFFFF',
+                        color: '#000000',
+                        fontSize: '14px',
                         fontWeight: 700,
-                        letterSpacing: '1px',
-                        textTransform: 'uppercase',
+                        padding: '6px 16px',
+                        borderRadius: '20px',
                     }}
                 >
-                    Upgrade
+                    Explore Premium
                 </Button>
 
                 <button
                     onClick={() => navigate('/login')}
                     style={{
-                        width: '36px',
-                        height: '36px',
+                        width: '32px',
+                        height: '32px',
                         borderRadius: '50%',
-                        backgroundColor: '#333',
+                        backgroundColor: '#1a1a1a',
                         color: '#FFFFFF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer',
-                        border: '2px solid transparent',
-                        transition: 'all 200ms ease',
+                        border: 'none',
+                        padding: '6px',
                     }}
+                    className="icon-hover-bg"
                     aria-label="User profile"
                 >
-                    <FaUserCircle style={{ fontSize: '24px' }} />
+                    <FaUserCircle style={{ fontSize: '20px' }} />
                 </button>
             </div>
         </header>
