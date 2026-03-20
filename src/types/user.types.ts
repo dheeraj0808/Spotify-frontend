@@ -1,10 +1,12 @@
 export interface User {
     id: string;
-    username: string;
+    name: string;
+    username?: string;
     email: string;
-    displayName: string;
-    avatarUrl: string;
-    isPremium: boolean;
+    displayName?: string;
+    avatarUrl?: string;
+    isPremium?: boolean;
+    role: "user" | "artist" | "admin";
     createdAt: string;
 }
 
@@ -22,8 +24,8 @@ export interface LoginCredentials {
 }
 
 export interface RegisterCredentials {
-    username: string;
+    name: string;
     email: string;
     password: string;
-    displayName: string;
+    role?: string;
 }

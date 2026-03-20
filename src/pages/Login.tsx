@@ -1,31 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaSpotify } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple, FaFacebook } from 'react-icons/fa';
 import Button from '../components/common/Button';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Login() {
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true);
+    const { login, isAuthenticated, isLoading, error } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Demo: just navigate to home
-        navigate('/');
+        if (!email || !password) return;
+        await login({ email, password });
     };
 
     return (
         <div
             style={{
                 minHeight: '100vh',
-                backgroundColor: '#121212',
+                backgroundColor: '#000000',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                background: 'linear-gradient(180deg, #1a1a1a 0%, #121212 30%)',
+                background: 'linear-gradient(180deg, #1a1a1a 0%, #000000 100%)',
+                color: '#FFFFFF'
             }}
         >
             {/* Header */}
@@ -35,7 +43,7 @@ export default function Login() {
                     padding: '32px',
                     display: 'flex',
                     justifyContent: 'center',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
                     backgroundColor: '#000000',
                 }}
             >
@@ -43,13 +51,13 @@ export default function Login() {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px',
+                        gap: '12px',
                         cursor: 'pointer',
                     }}
                     onClick={() => navigate('/')}
                 >
-                    <FaSpotify style={{ fontSize: '40px', color: '#FFFFFF' }} />
-                    <span style={{ fontSize: '28px', fontWeight: 800, color: '#FFFFFF' }}>
+                    <FaSpotify style={{ fontSize: '44px', color: '#1DB954' }} />
+                    <span style={{ fontSize: '30px', fontWeight: 900, letterSpacing: '-1px' }}>
                         Spotify
                     </span>
                 </div>
@@ -59,261 +67,175 @@ export default function Login() {
             <div
                 style={{
                     width: '100%',
-                    maxWidth: '450px',
-                    padding: '48px 32px',
-                    animation: 'fadeInUp 400ms ease',
+                    maxWidth: '430px',
+                    margin: '32px auto',
+                    padding: '48px 56px',
+                    backgroundColor: '#121212',
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.5)',
                 }}
             >
                 <h1
                     style={{
-                        fontSize: '2rem',
-                        fontWeight: 800,
-                        color: '#FFFFFF',
+                        fontSize: '32px',
+                        fontWeight: 900,
                         textAlign: 'center',
                         marginBottom: '40px',
+                        letterSpacing: '-1px'
                     }}
                 >
-                    {isLogin ? 'Log in to Spotify' : 'Sign up for Spotify'}
+                    Log in to Spotify
                 </h1>
 
-                {/* Social Login Buttons */}
+                {error && (
+                    <div style={{
+                        backgroundColor: '#E91429',
+                        color: 'white',
+                        padding: '12px 16px',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        marginBottom: '24px',
+                        textAlign: 'center',
+                        animation: 'fadeIn 0.3s ease'
+                    }}>
+                        {error}
+                    </div>
+                )}
+
+                {/* Social Buttons */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-                    <button
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '12px',
-                            padding: '14px 24px',
-                            borderRadius: '9999px',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            backgroundColor: 'transparent',
-                            color: '#FFFFFF',
-                            fontSize: '14px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            transition: 'all 200ms ease',
-                        }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.borderColor = '#FFFFFF')
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)')
-                        }
-                    >
-                        <FcGoogle style={{ fontSize: '22px' }} />
-                        Continue with Google
-                    </button>
-
-                    <button
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '12px',
-                            padding: '14px 24px',
-                            borderRadius: '9999px',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            backgroundColor: 'transparent',
-                            color: '#FFFFFF',
-                            fontSize: '14px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            transition: 'all 200ms ease',
-                        }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.borderColor = '#FFFFFF')
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)')
-                        }
-                    >
-                        <FaFacebook style={{ fontSize: '22px', color: '#1877F2' }} />
-                        Continue with Facebook
-                    </button>
-
-                    <button
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '12px',
-                            padding: '14px 24px',
-                            borderRadius: '9999px',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            backgroundColor: 'transparent',
-                            color: '#FFFFFF',
-                            fontSize: '14px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            transition: 'all 200ms ease',
-                        }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.borderColor = '#FFFFFF')
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)')
-                        }
-                    >
-                        <FaApple style={{ fontSize: '22px' }} />
-                        Continue with Apple
-                    </button>
+                    <SocialButton icon={<FcGoogle size={20} />} label="Continue with Google" />
+                    <SocialButton icon={<FaFacebook size={20} color="#1877F2" />} label="Continue with Facebook" />
+                    <SocialButton icon={<FaApple size={20} />} label="Continue with Apple" />
                 </div>
 
-                {/* Divider */}
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px',
-                        marginBottom: '32px',
-                    }}
-                >
-                    <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
-                    <span style={{ fontSize: '12px', color: '#A7A7A7', textTransform: 'uppercase', letterSpacing: '1px' }}>or</span>
-                    <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    marginBottom: '32px',
+                }}>
+                    <div style={{ flex: 1, height: '1px', backgroundColor: '#292929' }} />
+                    <span style={{ fontSize: '12px', color: '#7c7c7c', fontWeight: 700 }}>OR</span>
+                    <div style={{ flex: 1, height: '1px', backgroundColor: '#292929' }} />
                 </div>
 
-                {/* Email/Password Form */}
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div>
-                        <label
-                            style={{
-                                display: 'block',
-                                fontSize: '14px',
-                                fontWeight: 700,
-                                color: '#FFFFFF',
-                                marginBottom: '8px',
-                            }}
-                        >
-                            Email or username
-                        </label>
+                        <label style={labelStyle}>Email or username</label>
                         <input
                             type="text"
                             placeholder="Email or username"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '14px 16px',
-                                borderRadius: '4px',
-                                border: '1px solid rgba(255,255,255,0.3)',
-                                backgroundColor: '#121212',
-                                color: '#FFFFFF',
-                                fontSize: '14px',
-                                transition: 'border-color 200ms ease',
-                                outline: 'none',
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
-                            onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.3)')}
+                            style={inputStyle}
                         />
                     </div>
 
                     <div>
-                        <label
-                            style={{
-                                display: 'block',
-                                fontSize: '14px',
-                                fontWeight: 700,
-                                color: '#FFFFFF',
-                                marginBottom: '8px',
-                            }}
-                        >
-                            Password
-                        </label>
+                        <label style={labelStyle}>Password</label>
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '14px 16px',
-                                borderRadius: '4px',
-                                border: '1px solid rgba(255,255,255,0.3)',
-                                backgroundColor: '#121212',
-                                color: '#FFFFFF',
-                                fontSize: '14px',
-                                transition: 'border-color 200ms ease',
-                                outline: 'none',
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
-                            onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.3)')}
+                            style={inputStyle}
                         />
                     </div>
 
-                    {isLogin && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div
-                                style={{
-                                    width: '16px',
-                                    height: '16px',
-                                    borderRadius: '2px',
-                                    border: '1px solid rgba(255,255,255,0.3)',
-                                    cursor: 'pointer',
-                                }}
-                            />
-                            <span style={{ fontSize: '14px', color: '#FFFFFF' }}>Remember me</span>
-                        </div>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '8px 0' }}>
+                        <input type="checkbox" id="remember" style={{ accentColor: '#1DB954' }} />
+                        <label htmlFor="remember" style={{ fontSize: '14px', fontWeight: 500 }}>Remember me</label>
+                    </div>
 
                     <Button
                         type="submit"
                         variant="primary"
-                        size="lg"
+                        loading={isLoading}
                         fullWidth
                         style={{
-                            marginTop: '8px',
+                            padding: '14px',
                             fontSize: '16px',
                             fontWeight: 700,
-                            padding: '16px',
+                            borderRadius: '9999px',
+                            marginTop: '12px'
                         }}
                     >
-                        {isLogin ? 'Log In' : 'Sign Up'}
+                        Log In
                     </Button>
                 </form>
 
-                {isLogin && (
-                    <p
-                        style={{
-                            textAlign: 'center',
-                            marginTop: '24px',
-                            fontSize: '14px',
-                            color: '#FFFFFF',
-                            textDecoration: 'underline',
-                            cursor: 'pointer',
-                        }}
-                    >
+                <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <Link to="/forgot-password" style={{ fontSize: '14px', color: '#FFFFFF', textDecoration: 'none', fontWeight: 600 }}>
                         Forgot your password?
-                    </p>
-                )}
+                    </Link>
+                </div>
 
-                {/* Toggle */}
-                <div
-                    style={{
-                        textAlign: 'center',
-                        marginTop: '32px',
-                        paddingTop: '24px',
-                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                    }}
-                >
-                    <span style={{ fontSize: '14px', color: '#A7A7A7' }}>
-                        {isLogin ? "Don't have an account? " : 'Already have an account? '}
-                    </span>
-                    <span
-                        onClick={() => setIsLogin(!isLogin)}
+                <div style={{
+                    textAlign: 'center',
+                    marginTop: '32px',
+                    paddingTop: '32px',
+                    borderTop: '1px solid #292929',
+                }}>
+                    <span style={{ fontSize: '14px', color: '#7c7c7c' }}>Don't have an account? </span>
+                    <Link
+                        to="/register"
                         style={{
                             fontSize: '14px',
                             color: '#FFFFFF',
                             textDecoration: 'underline',
-                            cursor: 'pointer',
-                            fontWeight: 600,
+                            fontWeight: 700,
                         }}
                     >
-                        {isLogin ? 'Sign up for Spotify' : 'Log in here'}
-                    </span>
+                        Sign up for Spotify
+                    </Link>
                 </div>
             </div>
         </div>
     );
 }
+
+function SocialButton({ icon, label }: { icon: React.ReactNode, label: string }) {
+    return (
+        <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            padding: '12px 24px',
+            borderRadius: '9999px',
+            border: '1px solid #7c7c7c',
+            backgroundColor: 'transparent',
+            color: '#FFFFFF',
+            fontSize: '16px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+        }}
+        onMouseOver={(e) => e.currentTarget.style.borderColor = '#FFFFFF'}
+        onMouseOut={(e) => e.currentTarget.style.borderColor = '#7c7c7c'}
+        >
+            {icon}
+            {label}
+        </button>
+    );
+}
+
+const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '14px',
+    fontWeight: 700,
+    marginBottom: '8px',
+};
+
+const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '14px',
+    borderRadius: '4px',
+    border: '1px solid #7c7c7c',
+    backgroundColor: 'transparent',
+    color: '#FFFFFF',
+    fontSize: '16px',
+    outline: 'none',
+    transition: 'border-color 0.2s ease',
+};

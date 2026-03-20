@@ -1,67 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaSpotify } from 'react-icons/fa';
 import Button from '../components/common/Button';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Register() {
     const navigate = useNavigate();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const { register, isAuthenticated, isLoading, error } = useAuth();
+    
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+    const [localErrors, setLocalErrors] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
 
     const validate = () => {
         const errs: Record<string, string> = {};
-        if (!name.trim()) errs.name = 'Name is required';
-        if (!email.trim()) errs.email = 'Email is required';
-        else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Invalid email address';
-        if (!password) errs.password = 'Password is required';
-        else if (password.length < 8) errs.password = 'Password must be at least 8 characters';
-        if (password !== confirmPassword) errs.confirmPassword = 'Passwords do not match';
+        if (!formData.name.trim()) errs.name = 'What should we call you?';
+        if (!formData.email.trim()) errs.email = 'You need to enter your email.';
+        else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = 'This email is invalid.';
+        
+        if (!formData.password) errs.password = 'You need to enter a password.';
+        else if (formData.password.length < 8) errs.password = 'Your password is too short.';
+        
+        if (formData.password !== formData.confirmPassword) {
+            errs.confirmPassword = 'Passwords do not match.';
+        }
         return errs;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const errs = validate();
         if (Object.keys(errs).length > 0) {
-            setErrors(errs);
+            setLocalErrors(errs);
             return;
         }
-        setErrors({});
-        navigate('/');
+        setLocalErrors({});
+        await register({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+        });
     };
 
-    const inputStyle: React.CSSProperties = {
-        width: '100%',
-        padding: '14px 16px',
-        borderRadius: '4px',
-        border: '1px solid rgba(255,255,255,0.3)',
-        backgroundColor: '#121212',
-        color: '#FFFFFF',
-        fontSize: '14px',
-        transition: 'border-color 200ms ease',
-        outline: 'none',
-    };
-
-    const labelStyle: React.CSSProperties = {
-        display: 'block',
-        fontSize: '14px',
-        fontWeight: 700,
-        color: '#FFFFFF',
-        marginBottom: '8px',
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     return (
         <div
             style={{
                 minHeight: '100vh',
-                backgroundColor: '#121212',
+                backgroundColor: '#000000',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                background: 'linear-gradient(180deg, #1a1a1a 0%, #121212 30%)',
+                background: 'linear-gradient(180deg, #1a1a1a 0%, #000000 100%)',
+                color: '#FFFFFF'
             }}
         >
             {/* Header */}
@@ -71,7 +75,7 @@ export default function Register() {
                     padding: '32px',
                     display: 'flex',
                     justifyContent: 'center',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
                     backgroundColor: '#000000',
                 }}
             >
@@ -79,13 +83,13 @@ export default function Register() {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px',
+                        gap: '12px',
                         cursor: 'pointer',
                     }}
                     onClick={() => navigate('/')}
                 >
-                    <FaSpotify style={{ fontSize: '40px', color: '#FFFFFF' }} />
-                    <span style={{ fontSize: '28px', fontWeight: 800, color: '#FFFFFF' }}>
+                    <FaSpotify style={{ fontSize: '44px', color: '#1DB954' }} />
+                    <span style={{ fontSize: '30px', fontWeight: 900, letterSpacing: '-1px' }}>
                         Spotify
                     </span>
                 </div>
@@ -95,168 +99,125 @@ export default function Register() {
             <div
                 style={{
                     width: '100%',
-                    maxWidth: '450px',
-                    padding: '48px 32px',
-                    animation: 'fadeInUp 400ms ease',
+                    maxWidth: '430px',
+                    margin: '32px auto',
+                    padding: '48px 56px',
+                    backgroundColor: '#121212',
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.5)',
                 }}
             >
                 <h1
                     style={{
-                        fontSize: '2rem',
-                        fontWeight: 800,
-                        color: '#FFFFFF',
+                        fontSize: '32px',
+                        fontWeight: 900,
                         textAlign: 'center',
-                        marginBottom: '12px',
-                    }}
-                >
-                    Sign up for free
-                </h1>
-                <p
-                    style={{
-                        textAlign: 'center',
-                        fontSize: '14px',
-                        color: '#A7A7A7',
                         marginBottom: '40px',
+                        letterSpacing: '-1px'
                     }}
                 >
-                    Start listening with a free Spotify account
-                </p>
+                    Sign up to start listening
+                </h1>
 
-                {/* Divider */}
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px',
-                        marginBottom: '32px',
-                    }}
-                >
-                    <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
-                    <span style={{ fontSize: '12px', color: '#A7A7A7', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                        sign up with your email
-                    </span>
-                    <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
-                </div>
+                {(error || Object.keys(localErrors).length > 0) && (
+                    <div style={{
+                        backgroundColor: '#E91429',
+                        color: 'white',
+                        padding: '12px 16px',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        marginBottom: '24px',
+                        textAlign: 'center',
+                        animation: 'fadeIn 0.3s ease'
+                    }}>
+                        {error || 'Please correct the errors below.'}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {/* Name */}
                     <div>
                         <label style={labelStyle}>What's your name?</label>
                         <input
+                            name="name"
                             type="text"
                             placeholder="Enter your name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            style={{
-                                ...inputStyle,
-                                borderColor: errors.name ? '#F15E6C' : 'rgba(255,255,255,0.3)',
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
-                            onBlur={(e) => (e.target.style.borderColor = errors.name ? '#F15E6C' : 'rgba(255,255,255,0.3)')}
+                            value={formData.name}
+                            onChange={handleChange}
+                            style={{ ...inputStyle, borderColor: localErrors.name ? '#E91429' : '#7c7c7c' }}
                         />
-                        {errors.name && (
-                            <p style={{ fontSize: '12px', color: '#F15E6C', marginTop: '6px' }}>{errors.name}</p>
-                        )}
+                        {localErrors.name && <p style={errorText}>{localErrors.name}</p>}
                     </div>
 
-                    {/* Email */}
                     <div>
                         <label style={labelStyle}>What's your email?</label>
                         <input
+                            name="email"
                             type="email"
                             placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            style={{
-                                ...inputStyle,
-                                borderColor: errors.email ? '#F15E6C' : 'rgba(255,255,255,0.3)',
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
-                            onBlur={(e) => (e.target.style.borderColor = errors.email ? '#F15E6C' : 'rgba(255,255,255,0.3)')}
+                            value={formData.email}
+                            onChange={handleChange}
+                            style={{ ...inputStyle, borderColor: localErrors.email ? '#E91429' : '#7c7c7c' }}
                         />
-                        {errors.email && (
-                            <p style={{ fontSize: '12px', color: '#F15E6C', marginTop: '6px' }}>{errors.email}</p>
-                        )}
+                        {localErrors.email && <p style={errorText}>{localErrors.email}</p>}
                     </div>
 
-                    {/* Password */}
                     <div>
                         <label style={labelStyle}>Create a password</label>
                         <input
+                            name="password"
                             type="password"
                             placeholder="Create a password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{
-                                ...inputStyle,
-                                borderColor: errors.password ? '#F15E6C' : 'rgba(255,255,255,0.3)',
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
-                            onBlur={(e) => (e.target.style.borderColor = errors.password ? '#F15E6C' : 'rgba(255,255,255,0.3)')}
+                            value={formData.password}
+                            onChange={handleChange}
+                            style={{ ...inputStyle, borderColor: localErrors.password ? '#E91429' : '#7c7c7c' }}
                         />
-                        {errors.password && (
-                            <p style={{ fontSize: '12px', color: '#F15E6C', marginTop: '6px' }}>{errors.password}</p>
-                        )}
-                        <p style={{ fontSize: '12px', color: '#6A6A6A', marginTop: '6px' }}>
-                            Use 8 or more characters with a mix of letters, numbers & symbols
-                        </p>
+                        {localErrors.password && <p style={errorText}>{localErrors.password}</p>}
                     </div>
 
-                    {/* Confirm Password */}
                     <div>
                         <label style={labelStyle}>Confirm your password</label>
                         <input
+                            name="confirmPassword"
                             type="password"
                             placeholder="Confirm your password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            style={{
-                                ...inputStyle,
-                                borderColor: errors.confirmPassword ? '#F15E6C' : 'rgba(255,255,255,0.3)',
-                            }}
-                            onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
-                            onBlur={(e) => (e.target.style.borderColor = errors.confirmPassword ? '#F15E6C' : 'rgba(255,255,255,0.3)')}
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            style={{ ...inputStyle, borderColor: localErrors.confirmPassword ? '#E91429' : '#7c7c7c' }}
                         />
-                        {errors.confirmPassword && (
-                            <p style={{ fontSize: '12px', color: '#F15E6C', marginTop: '6px' }}>{errors.confirmPassword}</p>
-                        )}
+                        {localErrors.confirmPassword && <p style={errorText}>{localErrors.confirmPassword}</p>}
                     </div>
 
                     <Button
                         type="submit"
                         variant="primary"
-                        size="lg"
+                        loading={isLoading}
                         fullWidth
                         style={{
-                            marginTop: '8px',
+                            padding: '14px',
                             fontSize: '16px',
                             fontWeight: 700,
-                            padding: '16px',
+                            borderRadius: '9999px',
+                            marginTop: '12px'
                         }}
                     >
                         Sign Up
                     </Button>
                 </form>
 
-                {/* Toggle */}
-                <div
-                    style={{
-                        textAlign: 'center',
-                        marginTop: '32px',
-                        paddingTop: '24px',
-                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                    }}
-                >
-                    <span style={{ fontSize: '14px', color: '#A7A7A7' }}>
-                        Already have an account?{' '}
-                    </span>
+                <div style={{
+                    textAlign: 'center',
+                    marginTop: '32px',
+                    paddingTop: '32px',
+                    borderTop: '1px solid #292929',
+                }}>
+                    <span style={{ fontSize: '14px', color: '#7c7c7c' }}>Already have an account? </span>
                     <Link
                         to="/login"
                         style={{
                             fontSize: '14px',
                             color: '#FFFFFF',
                             textDecoration: 'underline',
-                            fontWeight: 600,
+                            fontWeight: 700,
                         }}
                     >
                         Log in here
@@ -266,3 +227,29 @@ export default function Register() {
         </div>
     );
 }
+
+const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '14px',
+    fontWeight: 700,
+    marginBottom: '8px',
+};
+
+const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '14px',
+    borderRadius: '4px',
+    border: '1px solid #7c7c7c',
+    backgroundColor: 'transparent',
+    color: '#FFFFFF',
+    fontSize: '16px',
+    outline: 'none',
+    transition: 'border-color 0.2s ease',
+};
+
+const errorText: React.CSSProperties = {
+    fontSize: '12px',
+    color: '#F15E6C',
+    marginTop: '6px',
+    fontWeight: 500,
+};

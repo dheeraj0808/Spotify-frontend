@@ -8,9 +8,9 @@ import { PlayerProvider } from './context/PlayerContext';
 
 function AppLayout() {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-  if (isLoginPage) {
+  if (isAuthPage) {
     return <AppRoutes />;
   }
 
